@@ -16,6 +16,7 @@ namespace Патерн_Стратегия_Наблюдатель
         Point CurPoint;
         Point PrePoint;
         Drawing drawing = new Drawing();
+        Observer obs = new Observer();
 
         public Form1()
         {
@@ -23,8 +24,9 @@ namespace Патерн_Стратегия_Наблюдатель
 
             //Выбраем элемент заранее
             cbStartCapLine.SelectedIndex = 0;
-            cbEndCapLine.SelectedIndex = 0;         
+            cbEndCapLine.SelectedIndex = 0;
 
+            drawing.AddObserver(obs);
             g = Canvas.CreateGraphics();                    
         }
 

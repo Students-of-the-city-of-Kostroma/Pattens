@@ -10,6 +10,7 @@ namespace Патерн_Стратегия_Наблюдатель
 {
     class Drawing : IObserverable
     {
+        public event EventHandler Event;
         public IStrategy StrategyForStartCap { get; set; }
         public IStrategy StrategyForEndCap { get; set; }
         private List<IObserver> listObservers = new List<IObserver>();       
@@ -18,6 +19,7 @@ namespace Патерн_Стратегия_Наблюдатель
         {
             StrategyForStartCap = new StrategyArrow();
             StrategyForEndCap = new StrategyArrow();
+            Event = delegate { NotifyObservers(); };
         }
 
         public void DrawLine(Graphics g, Point curPoint, Point prePoint)
@@ -33,7 +35,7 @@ namespace Патерн_Стратегия_Наблюдатель
                     p.CustomEndCap = capEnd;
 
                 g.DrawLine(p, curPoint, prePoint);
-                NotifyObservers();
+                Event?.Invoke(this, new EventArgs());
             }
         }
 
