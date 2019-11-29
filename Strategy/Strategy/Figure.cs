@@ -17,9 +17,9 @@ namespace Strategy
         {
             _strategy = strategy;
         }
-        public string WhatIsIt()
+        public string IAmIs()
         {
-            return _strategy.WhatIsIt();
+            return _strategy.IAmIs();
         }
     }
 }

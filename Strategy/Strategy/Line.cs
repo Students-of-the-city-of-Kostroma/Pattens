@@ -36,7 +36,7 @@ namespace Strategy
         }
         public override string ToString()
         {
-            return $"{GetCap()}\t {{{FirstFigure.WhatIsIt()}; {LastFigure.WhatIsIt()}}}";
+            return $"{GetCap()}\t {{{FirstFigure.IAmIs()}; {LastFigure.IAmIs()}}}";
         }
     }
 }

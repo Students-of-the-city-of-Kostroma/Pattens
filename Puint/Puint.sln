@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.852
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paint", "Paint\Paint.csproj", "{42C3CF04-72B5-4316-A542-564B82B55486}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Puint", "Puint\Puint.csproj", "{F196685D-929E-4B2E-996E-56510F509574}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{42C3CF04-72B5-4316-A542-564B82B55486}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{42C3CF04-72B5-4316-A542-564B82B55486}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{42C3CF04-72B5-4316-A542-564B82B55486}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{42C3CF04-72B5-4316-A542-564B82B55486}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F196685D-929E-4B2E-996E-56510F509574}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F196685D-929E-4B2E-996E-56510F509574}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F196685D-929E-4B2E-996E-56510F509574}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F196685D-929E-4B2E-996E-56510F509574}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {461F36F1-FD9B-4A89-B5FC-B73150BEECC8}
+		SolutionGuid = {9EFED7D6-A972-4A89-90D3-78989FA85DE6}
 	EndGlobalSection
 EndGlobal

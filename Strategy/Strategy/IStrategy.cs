@@ -8,6 +8,6 @@ namespace Strategy
 {
     interface IStrategy
     {
-        string WhatIsIt();
+        string IAmIs();
     }
 }

@@ -8,7 +8,7 @@ namespace Strategy
 {
     class None : IStrategy
     {
-        public string WhatIsIt()
+        public string IAmIs()
         {
             return "None";
         }

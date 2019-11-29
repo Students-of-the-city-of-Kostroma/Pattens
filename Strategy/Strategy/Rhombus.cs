@@ -8,7 +8,7 @@ namespace Strategy
 {
     class Rhombus : IStrategy
     {
-        public string WhatIsIt()
+        public string IAmIs()
         {
             return "Rhombus";
         }

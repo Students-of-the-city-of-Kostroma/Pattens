@@ -9,22 +9,32 @@ namespace Strategy
     class Program
     {
         static List<Line> lines = new List<Line>();
+        /// <summary>
+        /// Ввод данных
+        /// </summary>
+        /// <returns></returns>
         public static char Message()
         {
             Console.WriteLine();
-            Console.WriteLine("1. Создать новую линию");
-            Console.WriteLine("2. Вывести линии на экран");
-            Console.WriteLine("3. Выход из программы");
+            Console.WriteLine("Let's make a choice");
+            Console.WriteLine("1. New Line");
+            Console.WriteLine("2. Print Lines");
+            Console.WriteLine("3. Exit");
             return Console.ReadLine()[0];
         }
+        /// <summary>
+        /// Выбираем наши окончания
+        /// </summary>
+        /// <returns></returns>
         public static Figure MessageType()
         {
             Console.WriteLine();
-            Console.WriteLine("1. Нет фигуры");
-            Console.WriteLine("2. Стрелка");
-            Console.WriteLine("3. Ромб");
-            char s = Console.ReadLine()[0];
-            switch (s)
+            Console.WriteLine("Select sides");
+            Console.WriteLine("1. None");
+            Console.WriteLine("2. Arrow");
+            Console.WriteLine("3. Rhombus");
+            char key = Console.ReadLine()[0];
+            switch (key)
             {
                 case '1':
                     {
@@ -41,12 +51,15 @@ namespace Strategy
             }
             return null;
         }
+        /// <summary>
+        /// Вывод данных на экран
+        /// </summary>
         public static void CommandPanel()
         {
-            char s = Message();
-            while (s != '3')
+            char key_2 = Message();
+            while (key_2 != '3')
             {
-                switch (s)
+                switch (key_2)
                 {
                     case '1':
                         {
@@ -63,7 +76,7 @@ namespace Strategy
                             break;
                         }
                 }
-                s = Message();
+                key_2 = Message();
             }
         }
         static void Main(string[] args)
