@@ -26,7 +26,7 @@ namespace Патерн_Стратегия_Наблюдатель
             cbStartCapLine.SelectedIndex = 0;
             cbEndCapLine.SelectedIndex = 0;
 
-            drawing.AddObserver(obs);
+            drawing.Observer = obs;
             g = Canvas.CreateGraphics();                    
         }
 

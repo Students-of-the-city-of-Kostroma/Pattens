@@ -6,20 +6,21 @@ using System.Threading.Tasks;
 
 namespace Патерн_Стратегия_Наблюдатель
 {
-    class Observer : IObserver
+    class Observer
     {
         private IStrategy CapStart;
-        private IStrategy CapEnd;
+        private IStrategy CapEnd;             
 
-        public void Update(IStrategy CapStart, IStrategy CapEnd)
+        public void ChangeUpdate(object s, EventArgs e)
+        {
+            IStrategy[] strategies = s as IStrategy[];
+            Update(strategies[0], strategies[1]);
+        }
+
+        private void Update(IStrategy CapStart, IStrategy CapEnd)
         {
             this.CapStart = CapStart;
             this.CapEnd = CapEnd;
-        }
-    }
-
-    interface IObserver
-    {
-        void Update(IStrategy CapStart, IStrategy CapEnd);
-    }
+        }    
+    }    
 }

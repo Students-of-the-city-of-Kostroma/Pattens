@@ -8,58 +8,48 @@ using System.Drawing.Drawing2D;
 
 namespace Патерн_Стратегия_Наблюдатель
 {
-    class Drawing : IObserverable
+    class Drawing
     {
-        public event EventHandler Event;
         public IStrategy StrategyForStartCap { get; set; }
         public IStrategy StrategyForEndCap { get; set; }
-        private List<IObserver> listObservers = new List<IObserver>();       
+        private Observer observer;
+        public Observer Observer
+        {
+            get
+            {
+                return observer;
+            }
+            set
+            {
+                observer = value;
+                ChangeDrawing += observer.ChangeUpdate;
+            }
+        }
+        public event EventHandler ChangeDrawing;
 
         public Drawing()
         {
             StrategyForStartCap = new StrategyArrow();
-            StrategyForEndCap = new StrategyArrow();
-            Event = delegate { NotifyObservers(); };
+            StrategyForEndCap = new StrategyArrow();            
         }
 
         public void DrawLine(Graphics g, Point curPoint, Point prePoint)
         {
-            using(Pen p = new Pen(Color.Black))
+            using (Pen p = new Pen(Color.Black))
             {
                 CustomLineCap capStart = StrategyForStartCap.DrawLine();
                 CustomLineCap capEnd = StrategyForEndCap.DrawLine();
 
                 if (capStart != null)
-                    p.CustomStartCap = capStart;                
-                if(capEnd != null)
+                    p.CustomStartCap = capStart;
+                if (capEnd != null)
                     p.CustomEndCap = capEnd;
 
                 g.DrawLine(p, curPoint, prePoint);
-                Event?.Invoke(this, new EventArgs());
+
+                object s = new IStrategy[] { StrategyForStartCap, StrategyForEndCap };
+                ChangeDrawing.Invoke(s, null);
             }
-        }
-
-        public void AddObserver(IObserver o)
-        {
-            listObservers.Add(o);
-        }
-
-        public void RemoveObserver(IObserver o)
-        {
-            listObservers.Remove(o);
-        }
-
-        public void NotifyObservers()
-        {
-            foreach (IObserver element in listObservers)
-                element.Update(StrategyForStartCap, StrategyForEndCap);                
         }        
-    }    
-
-    interface IObserverable
-    {
-        void AddObserver(IObserver o);
-        void RemoveObserver(IObserver o);
-        void NotifyObservers();
-    }
+    }        
 }
