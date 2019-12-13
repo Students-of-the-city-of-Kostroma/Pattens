@@ -9,17 +9,107 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Threading;
 
 namespace Puint
 {
     public partial class Form1 : Form
     {
+
         public Form1()
         {
             InitializeComponent();
             BtnColor.BackColor = Color.Black;//первоначальный цвет пера
             gr = panel1.CreateGraphics();//создаем область для работы с графикой на панели
+            OnProgress += ChangeProgress;
+            OnComplete += Form1_OnComplete;
         }
+
+        Thread thread = new Thread(new ThreadStart(Copy));
+        public static string WhatText;
+        public static string WhereText;
+        public delegate void Complet(bool ifComplete);
+        public delegate void Progress(string message, int procent);
+        public static event Progress OnProgress;
+        public static event Complet OnComplete;
+
+
+        private void Form1_OnComplete(bool ifComplete)
+        {
+            if (!ifComplete)
+            {
+                label1.Invoke((MethodInvoker)delegate { label1.Text = "Произошла ошибка во время копирования"; });
+                if (File.Exists(WhereText))
+                    File.Delete(WhereText);
+            }
+        }
+        private static void Copy()
+        {
+            int BufLen = 1024;
+            try
+            {
+                Byte[] streamBuf = new Byte[BufLen];
+                long totalBytes = 0;
+                int numRead = 0;
+
+                using (FileStream sourse = new FileStream(WhatText, FileMode.Open, FileAccess.Read))
+                {
+                    long slen = sourse.Length;
+                    using (FileStream destinationStream = new FileStream(WhereText, FileMode.Create, FileAccess.Write))
+                    {
+                        while (true)
+                        {
+                            Thread.Sleep(50);
+                            numRead++;
+                            int byteR = sourse.Read(streamBuf, 0, BufLen);
+
+                            if (byteR == 0)
+                            {
+                                getInfo(slen, slen);
+                                break;
+                            }
+                            destinationStream.Write(streamBuf, 0, byteR);
+                            totalBytes += byteR;
+
+                            if (numRead % 10 == 0)
+                                getInfo(totalBytes, slen);
+                            if (byteR < BufLen)
+                            {
+                                getInfo(totalBytes, slen);
+                                break;
+
+                            }
+                        }
+                    }
+                }
+                OnComplete?.Invoke(true);
+            }
+            catch (ThreadAbortException) { }
+            catch (Exception e)
+            {
+                MessageBox.Show("Возникла ошибка: \n" + e.Message);
+                OnComplete?.Invoke(false);
+            }
+        }
+        private static void getInfo(long totalBytesRead, long sLenght)
+        {
+            string message = string.Empty;
+            double pctDone = (double)((double)totalBytesRead / (double)sLenght);
+            message = string.Format("Считано: {0} из {1}. Всего {2}%",
+                     totalBytesRead,
+                     sLenght,
+                     (int)(pctDone * 100));
+            OnProgress?.Invoke(message, (int)(pctDone * 100));
+        }
+        private void ChangeProgress(string message, int procent)
+        {
+            progressBar1.Invoke((MethodInvoker)delegate { progressBar1.Value = procent; });
+            if (procent == 100)
+                label1.Text = message;
+            else
+                label1.Text = message;
+        }
+
         Color color = Color.Black;//переменная цвета кисти
         bool isPressed = false; //возможность рисовать на панели
         Point NewPoint; //новая точка
@@ -171,6 +261,113 @@ namespace Puint
                     x.Draw(gr, (float)numericUpDown1.Value);
             }
             panel1.MouseDown += new MouseEventHandler(panel1_MouseDown);
+        }
+
+        private void FromD_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog file = new OpenFileDialog();
+            if (file.ShowDialog() == DialogResult.OK)
+                FromBox.Text = file.FileName;
+        }
+
+        private void ToD_Click(object sender, EventArgs e)
+        {
+            if (FromBox.Text == "Что копировать?")
+                label1.Text = "Сначала выберите откуда будем копировать";
+            else
+            {
+                if (!File.Exists(FromBox.Text))
+                    label1.Text = "Сначала выберите, что копировать";
+                else
+                {
+                    int ind = FromBox.Text.LastIndexOf('.');
+                    string format = FromBox.Text.Remove(0, ind);
+                    SaveFileDialog file = new SaveFileDialog() { Filter = $"{format}(*{format})|*{format}" };
+                    if (file.ShowDialog() == DialogResult.OK)
+                    {
+                        ToBox.Text = file.FileName;
+                    }
+                }
+            }
+        }
+
+        private void Start_Click(object sender, EventArgs e)
+        {
+            if (FromBox.Text == "Что копируем?")
+            {
+                label1.Text = "Выберите файл";
+            }
+            else
+            {
+                int index = FromBox.Text.LastIndexOf('.');
+                string format = FromBox.Text.Remove(0, index);
+                index = ToBox.Text.LastIndexOf('.');
+                string format2 = ToBox.Text.Remove(0, index);
+                if (format != format2)
+                    label1.Text = "Расширения файлов не совпадают!";
+                else
+                {
+                    if (!File.Exists(FromBox.Text))
+                        label1.Text = "Выбранный файл не найден";
+                    else
+                    {
+                        if (thread.ThreadState == ThreadState.Suspended)
+                        {
+                            thread.Resume();
+                        }
+                        else if (thread.ThreadState == ThreadState.Unstarted)
+                        {
+                            WhatText = FromBox.Text;
+                            WhereText = ToBox.Text;
+                            thread.Start();
+                        }
+                        else if (thread.ThreadState == ThreadState.Aborted)
+                        {
+                            thread = new Thread(new ThreadStart(Copy));
+                            WhatText = FromBox.Text;
+                            WhereText = ToBox.Text;
+                            thread.Start();
+                        }
+                    }
+                }
+            }
+        }
+
+        private void Pause_Click(object sender, EventArgs e)
+        {
+            if (FromBox.Text == "Что копируем?")
+            {
+                label1.Text = "Выберите файл";
+            }
+            else
+            {
+                if (thread.ThreadState == ThreadState.Running || thread.ThreadState == ThreadState.WaitSleepJoin)
+                {
+                    thread.Suspend();
+                    label1.Text = "Загрузка приостановлена";
+                }
+            }
+        }
+
+        private void BREAK_Click(object sender, EventArgs e)
+        {
+            if (FromBox.Text == "Что копируем?")
+            {
+                label1.Text = "Выберите файл";
+            }
+            else
+            {
+                if (thread.ThreadState != ThreadState.Stopped && thread.ThreadState != ThreadState.Unstarted && thread.ThreadState != ThreadState.Aborted)
+                {
+                    if (thread.ThreadState == ThreadState.Suspended)
+                        thread.Resume();
+                    thread.Abort();
+                    progressBar1.Value = 0;
+                    label1.Text = "Операция была отменена!";
+                    if (File.Exists(WhereText))
+                        File.Delete(WhereText);
+                }
+            }
         }
     }
     
